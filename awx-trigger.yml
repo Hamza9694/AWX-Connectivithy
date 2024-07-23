@@ -1,0 +1,26 @@
+name: Trigger AWX Job
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your preferred branch
+
+jobs:
+  trigger-awx-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Trigger AWX Job
+      env:
+        AWX_HOST: ${{ secrets.AWX_HOST }}
+        AWX_TOKEN: ${{ secrets.AWX_TOKEN }}
+        AWX_JOB_TEMPLATE_ID: ${{ secrets.AWX_JOB_TEMPLATE_ID }}
+      run: |
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $AWX_TOKEN" \
+          -d '{}' \
+          https://$AWX_HOST/api/v2/job_templates/$AWX_JOB_TEMPLATE_ID/launch/
